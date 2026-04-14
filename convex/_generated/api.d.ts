@@ -8,8 +8,13 @@
  * @module
  */
 
+import type * as campaigns from "../campaigns.js";
 import type * as checklist from "../checklist.js";
 import type * as content from "../content.js";
+import type * as investments from "../investments.js";
+import type * as locationFactors from "../locationFactors.js";
+import type * as maintenance from "../maintenance.js";
+import type * as panels from "../panels.js";
 
 import type {
   ApiFromModules,
@@ -18,8 +23,13 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  campaigns: typeof campaigns;
   checklist: typeof checklist;
   content: typeof content;
+  investments: typeof investments;
+  locationFactors: typeof locationFactors;
+  maintenance: typeof maintenance;
+  panels: typeof panels;
 }>;
 
 /**

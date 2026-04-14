@@ -2,10 +2,11 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const listTemplates = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { panelId: v.id("panels") },
+  handler: async (ctx, { panelId }) => {
     return await ctx.db
       .query("checklist_templates")
+      .withIndex("by_panel", (q) => q.eq("panelId", panelId))
       .filter((q) => q.eq(q.field("isActive"), true))
       .collect()
       .then((r) => r.sort((a, b) => a.order - b.order));
@@ -13,35 +14,49 @@ export const listTemplates = query({
 });
 
 export const listAllTemplates = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { panelId: v.id("panels") },
+  handler: async (ctx, { panelId }) => {
     return await ctx.db
       .query("checklist_templates")
+      .withIndex("by_panel", (q) => q.eq("panelId", panelId))
       .collect()
       .then((r) => r.sort((a, b) => a.order - b.order));
   },
 });
 
 export const listCompletionsForDate = query({
-  args: { dateKey: v.string() },
-  handler: async (ctx, { dateKey }) => {
+  args: {
+    panelId: v.id("panels"),
+    dateKey: v.string(),
+  },
+  handler: async (ctx, { panelId, dateKey }) => {
     return await ctx.db
       .query("checklist_completions")
-      .withIndex("by_dateKey", (q) => q.eq("dateKey", dateKey))
+      .withIndex("by_panel_dateKey", (q) =>
+        q.eq("panelId", panelId).eq("dateKey", dateKey)
+      )
       .collect();
   },
 });
 
 export const listCompletionHistory = query({
-  args: { from: v.string(), to: v.string() },
-  handler: async (ctx, { from, to }) => {
-    const all = await ctx.db.query("checklist_completions").collect();
+  args: {
+    panelId: v.id("panels"),
+    from: v.string(),
+    to: v.string(),
+  },
+  handler: async (ctx, { panelId, from, to }) => {
+    const all = await ctx.db
+      .query("checklist_completions")
+      .withIndex("by_panel_dateKey", (q) => q.eq("panelId", panelId))
+      .collect();
     return all.filter((c) => c.dateKey >= from && c.dateKey <= to);
   },
 });
 
 export const createTemplate = mutation({
   args: {
+    panelId: v.id("panels"),
     label: v.string(),
     recurrence: v.union(v.literal("daily"), v.literal("weekly")),
     dayOfWeek: v.optional(v.number()),
@@ -80,11 +95,12 @@ export const deleteTemplate = mutation({
 
 export const toggleCompletion = mutation({
   args: {
+    panelId: v.id("panels"),
     templateId: v.id("checklist_templates"),
     dateKey: v.string(),
     note: v.optional(v.string()),
   },
-  handler: async (ctx, { templateId, dateKey, note }) => {
+  handler: async (ctx, { panelId, templateId, dateKey, note }) => {
     const existing = await ctx.db
       .query("checklist_completions")
       .withIndex("by_templateId_dateKey", (q) =>
@@ -97,6 +113,7 @@ export const toggleCompletion = mutation({
     } else {
       await ctx.db.insert("checklist_completions", {
         templateId,
+        panelId,
         dateKey,
         completedAt: Date.now(),
         note,
