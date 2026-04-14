@@ -45,7 +45,7 @@ export default function ComprovacoesPage({
     country: panel?.locationCountry ?? "Brasil",
   });
 
-  if (panel === undefined || campaigns === undefined) {
+  if (panel === undefined || panel === null || campaigns === undefined) {
     return (
       <div className="flex justify-center items-center h-64">
         <Spinner size="lg" />
