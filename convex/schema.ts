@@ -28,6 +28,7 @@ export default defineSchema({
       v.literal("active"),
       v.literal("inactive")
     ),
+    totalSlots: v.optional(v.number()),
     constructionStartDate: v.optional(v.string()),
     constructionEndDate: v.optional(v.string()),
     operationReleaseDate: v.optional(v.string()),
@@ -63,22 +64,32 @@ export default defineSchema({
     .index("by_panel", ["panelId"])
     .index("by_panel_startDate", ["panelId", "startDate"]),
 
+  // ─── Tipos de conteúdo (configurável) ────────────────────────────────────
+  content_categories: defineTable({
+    label: v.string(),
+    isDefault: v.optional(v.boolean()),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+  }),
+
   // ─── Conteúdos do painel ──────────────────────────────────────────────────
   content_items: defineTable({
-    panelId: v.id("panels"),
+    panelId: v.optional(v.id("panels")),
     campaignId: v.optional(v.id("panel_campaigns")),
     title: v.string(),
     type: v.union(v.literal("text"), v.literal("image"), v.literal("video")),
-    source: v.union(v.literal("cassol"), v.literal("fornecedor")),
+    contentCategory: v.optional(v.id("content_categories")),
+    startDate: v.optional(v.string()),
+    endDate: v.optional(v.string()),
+    source: v.optional(v.union(v.literal("cassol"), v.literal("fornecedor"))),
     body: v.optional(v.string()),
     fileRef: v.optional(v.string()),
     duration: v.optional(v.number()),
     slotNumber: v.optional(v.number()),
     status: v.union(
       v.literal("draft"),
+      v.literal("pending_approval"),
       v.literal("scheduled"),
-      v.literal("active"),
-      v.literal("archived")
     ),
     scheduledWeekStart: v.optional(v.string()),
     scheduledAt: v.optional(v.number()),

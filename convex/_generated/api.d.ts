@@ -11,6 +11,7 @@
 import type * as campaigns from "../campaigns.js";
 import type * as checklist from "../checklist.js";
 import type * as content from "../content.js";
+import type * as contentCategories from "../contentCategories.js";
 import type * as investments from "../investments.js";
 import type * as locationFactors from "../locationFactors.js";
 import type * as maintenance from "../maintenance.js";
@@ -26,6 +27,7 @@ declare const fullApi: ApiFromModules<{
   campaigns: typeof campaigns;
   checklist: typeof checklist;
   content: typeof content;
+  contentCategories: typeof contentCategories;
   investments: typeof investments;
   locationFactors: typeof locationFactors;
   maintenance: typeof maintenance;

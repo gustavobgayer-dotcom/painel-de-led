@@ -53,6 +53,7 @@ export default function EditPanelPage({
     locationState: "SC",
     locationCity: "",
     dailyCarTraffic: "",
+    totalSlots: "",
     status: "active" as "construction" | "active" | "inactive",
     constructionStartDate: "",
     constructionEndDate: "",
@@ -73,6 +74,7 @@ export default function EditPanelPage({
         locationState: panel.locationState,
         locationCity: panel.locationCity ?? "",
         dailyCarTraffic: String(panel.dailyCarTraffic),
+        totalSlots: panel.totalSlots ? String(panel.totalSlots) : "",
         status: panel.status,
         constructionStartDate: panel.constructionStartDate ?? "",
         constructionEndDate: panel.constructionEndDate ?? "",
@@ -100,6 +102,7 @@ export default function EditPanelPage({
         locationState: form.locationState,
         locationCity: form.locationCity || undefined,
         dailyCarTraffic: Number(form.dailyCarTraffic) || 0,
+        totalSlots: form.totalSlots ? Number(form.totalSlots) : undefined,
         status: form.status,
         constructionStartDate: form.constructionStartDate || undefined,
         constructionEndDate: form.constructionEndDate || undefined,
@@ -173,9 +176,14 @@ export default function EditPanelPage({
                 <input value={form.locationCity} onChange={(e) => set("locationCity", e.target.value)} className={inputCls} />
               </Field>
             </div>
-            <Field label="Tráfego diário de carros">
-              <input type="number" min="0" value={form.dailyCarTraffic} onChange={(e) => set("dailyCarTraffic", e.target.value)} className={inputCls} />
-            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Tráfego diário de carros">
+                <input type="number" min="0" value={form.dailyCarTraffic} onChange={(e) => set("dailyCarTraffic", e.target.value)} className={inputCls} />
+              </Field>
+              <Field label="Quantidade de slots">
+                <input type="number" min="1" value={form.totalSlots} onChange={(e) => set("totalSlots", e.target.value)} placeholder="Ex: 8" className={inputCls} />
+              </Field>
+            </div>
           </div>
         </Card>
 

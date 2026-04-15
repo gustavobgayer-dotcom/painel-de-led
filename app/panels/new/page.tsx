@@ -28,6 +28,7 @@ export default function NewPanelPage() {
     locationState: "SC",
     locationCity: "",
     dailyCarTraffic: "",
+    totalSlots: "",
     status: "active" as "construction" | "active" | "inactive",
     constructionStartDate: "",
     constructionEndDate: "",
@@ -54,6 +55,7 @@ export default function NewPanelPage() {
         locationState: form.locationState,
         locationCity: form.locationCity || undefined,
         dailyCarTraffic: Number(form.dailyCarTraffic) || 0,
+        totalSlots: form.totalSlots ? Number(form.totalSlots) : undefined,
         status: form.status,
         constructionStartDate: form.constructionStartDate || undefined,
         constructionEndDate: form.constructionEndDate || undefined,
@@ -157,16 +159,28 @@ export default function NewPanelPage() {
                   />
                 </Field>
               </div>
-              <Field label="Tráfego diário de carros (estimativa)">
-                <input
-                  type="number"
-                  min="0"
-                  value={form.dailyCarTraffic}
-                  onChange={(e) => set("dailyCarTraffic", e.target.value)}
-                  placeholder="Ex: 5000"
-                  className={inputCls}
-                />
-              </Field>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Tráfego diário de carros (estimativa)">
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.dailyCarTraffic}
+                    onChange={(e) => set("dailyCarTraffic", e.target.value)}
+                    placeholder="Ex: 5000"
+                    className={inputCls}
+                  />
+                </Field>
+                <Field label="Quantidade de slots">
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.totalSlots}
+                    onChange={(e) => set("totalSlots", e.target.value)}
+                    placeholder="Ex: 8"
+                    className={inputCls}
+                  />
+                </Field>
+              </div>
             </div>
           </Card>
 

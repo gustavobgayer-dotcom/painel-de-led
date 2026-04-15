@@ -30,6 +30,7 @@ export const createPanel = mutation({
     locationState: v.string(),
     locationCity: v.optional(v.string()),
     dailyCarTraffic: v.number(),
+    totalSlots: v.optional(v.number()),
     status: v.union(
       v.literal("construction"),
       v.literal("active"),
@@ -60,6 +61,7 @@ export const updatePanel = mutation({
     locationState: v.optional(v.string()),
     locationCity: v.optional(v.string()),
     dailyCarTraffic: v.optional(v.number()),
+    totalSlots: v.optional(v.number()),
     status: v.optional(
       v.union(
         v.literal("construction"),

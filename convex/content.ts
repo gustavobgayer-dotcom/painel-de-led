@@ -8,9 +8,8 @@ export const listContent = query({
     status: v.optional(
       v.union(
         v.literal("draft"),
+        v.literal("pending_approval"),
         v.literal("scheduled"),
-        v.literal("active"),
-        v.literal("archived")
       )
     ),
     type: v.optional(
@@ -78,16 +77,18 @@ export const createContent = mutation({
     campaignId: v.optional(v.id("panel_campaigns")),
     title: v.string(),
     type: v.union(v.literal("text"), v.literal("image"), v.literal("video")),
+    contentCategory: v.optional(v.id("content_categories")),
     source: v.union(v.literal("cassol"), v.literal("fornecedor")),
     body: v.optional(v.string()),
     fileRef: v.optional(v.string()),
     duration: v.optional(v.number()),
     slotNumber: v.optional(v.number()),
+    startDate: v.optional(v.string()),
+    endDate: v.optional(v.string()),
     status: v.union(
       v.literal("draft"),
+      v.literal("pending_approval"),
       v.literal("scheduled"),
-      v.literal("active"),
-      v.literal("archived")
     ),
     scheduledWeekStart: v.optional(v.string()),
     scheduledAt: v.optional(v.number()),
@@ -109,6 +110,9 @@ export const updateContent = mutation({
     type: v.optional(
       v.union(v.literal("text"), v.literal("image"), v.literal("video"))
     ),
+    contentCategory: v.optional(v.id("content_categories")),
+    startDate: v.optional(v.string()),
+    endDate: v.optional(v.string()),
     source: v.optional(
       v.union(v.literal("cassol"), v.literal("fornecedor"))
     ),
@@ -119,9 +123,8 @@ export const updateContent = mutation({
     status: v.optional(
       v.union(
         v.literal("draft"),
+        v.literal("pending_approval"),
         v.literal("scheduled"),
-        v.literal("active"),
-        v.literal("archived")
       )
     ),
     scheduledWeekStart: v.optional(v.string()),
