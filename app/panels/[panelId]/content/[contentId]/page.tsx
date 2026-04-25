@@ -131,7 +131,7 @@ function ContentFormInner({
         slotNumber: form.slotNumber ? Number(form.slotNumber) : undefined,
         startDate: form.startDate || undefined,
         endDate: form.endDate || undefined,
-        status: form.status,
+        status: (form.status === "active" ? "draft" : form.status) as "draft" | "pending_approval" | "scheduled",
         campaignId: form.campaignId
           ? (form.campaignId as Id<"panel_campaigns">)
           : undefined,
