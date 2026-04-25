@@ -16,6 +16,7 @@ import type * as investments from "../investments.js";
 import type * as locationFactors from "../locationFactors.js";
 import type * as maintenance from "../maintenance.js";
 import type * as panels from "../panels.js";
+import type * as suppliers from "../suppliers.js";
 
 import type {
   ApiFromModules,
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   locationFactors: typeof locationFactors;
   maintenance: typeof maintenance;
   panels: typeof panels;
+  suppliers: typeof suppliers;
 }>;
 
 /**
