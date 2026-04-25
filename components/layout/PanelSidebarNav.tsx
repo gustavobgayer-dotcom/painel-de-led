@@ -13,7 +13,6 @@ const NAV_ITEMS = [
   { segment: "comprovacoes", label: "Comprovações", icon: "📋" },
   { segment: "checklist", label: "Checklist", icon: "✓" },
   { segment: "finance", label: "Financeiro", icon: "₿" },
-  { segment: "maintenance", label: "Manutenção", icon: "⚙" },
   { segment: "metrics", label: "Métricas", icon: "📊" },
   { segment: "tutorial", label: "Tutorial", icon: "?" },
 ];
