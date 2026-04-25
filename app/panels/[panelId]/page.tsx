@@ -146,7 +146,7 @@ export default function PanelOverviewPage({
       </div>
 
       {/* Datas de construção */}
-      {(panel.constructionStartDate || panel.operationReleaseDate) && (
+      {(panel.constructionStartDate || panel.constructionEndDate) && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl text-sm text-yellow-800 flex gap-6">
           {panel.constructionStartDate && (
             <span>
@@ -158,12 +158,6 @@ export default function PanelOverviewPage({
             <span>
               Término previsto:{" "}
               <strong>{formatDate(panel.constructionEndDate)}</strong>
-            </span>
-          )}
-          {panel.operationReleaseDate && (
-            <span>
-              Liberação para operação:{" "}
-              <strong>{formatDate(panel.operationReleaseDate)}</strong>
             </span>
           )}
         </div>
@@ -178,16 +172,18 @@ export default function PanelOverviewPage({
           icon="👥"
         />
         <OverviewCard
-          title="Investimento total"
-          value={formatCurrency(totalInvestment)}
-          subtitle={`${investments?.length ?? 0} lançamentos`}
-          icon="💰"
-        />
-        <OverviewCard
           title="Receita média mensal"
           value={formatCurrency(monthlyRevenue)}
           subtitle={`Total acumulado: ${formatCurrency(totalRevenue)}`}
           icon="📈"
+          valueColor="text-green-600"
+        />
+        <OverviewCard
+          title="Investimento total"
+          value={formatCurrency(totalInvestment)}
+          subtitle={`${investments?.length ?? 0} lançamentos`}
+          icon="💰"
+          valueColor="text-red-600"
         />
         <OverviewCard
           title="Projeção de payback"
@@ -238,6 +234,16 @@ export default function PanelOverviewPage({
           </p>
         )}
       </Card>
+
+      {/* Liberação para operação */}
+      {panel.operationReleaseDate && (
+        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl text-sm text-yellow-800 flex gap-6">
+          <span>
+            Liberação para operação:{" "}
+            <strong>{formatDate(panel.operationReleaseDate)}</strong>
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -247,11 +253,13 @@ function OverviewCard({
   value,
   subtitle,
   icon,
+  valueColor = "text-zinc-900",
 }: {
   title: string;
   value: string;
   subtitle: string;
   icon: string;
+  valueColor?: string;
 }) {
   return (
     <div className="bg-white border border-zinc-200 rounded-xl p-5">
@@ -261,7 +269,7 @@ function OverviewCard({
           {title}
         </span>
       </div>
-      <p className="text-2xl font-semibold text-zinc-900 mb-1">{value}</p>
+      <p className={`text-2xl font-semibold ${valueColor} mb-1`}>{value}</p>
       <p className="text-xs text-zinc-400">{subtitle}</p>
     </div>
   );
