@@ -164,13 +164,12 @@ export default function ContentPage({
     return d;
   });
   const [view, setView] = useState<View>("week");
-  const [activeMenu, setActiveMenu] = useState<Id<"content_items"> | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<Id<"content_items"> | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const panel = useQuery(api.panels.getPanel, { id: pid });
   const items = useQuery(api.content.listContent, { panelId: pid });
-  const updateContent = useMutation(api.content.updateContent);
   const deleteContent = useMutation(api.content.deleteContent);
 
   const totalSlots = panel?.totalSlots ?? 8;
@@ -233,30 +232,6 @@ export default function ContentPage({
   }
 
   // ─── Ações ────────────────────────────────────────────────────────────────
-
-  async function handleExtend(item: ContentItem) {
-    if (!item.endDate) return;
-    await updateContent({ id: item._id, endDate: dateKey(addDays(parseDate(item.endDate), 7)) });
-    setActiveMenu(null);
-  }
-
-  async function handleShrink(item: ContentItem) {
-    if (!item.endDate || !item.startDate) return;
-    const newEnd = addDays(parseDate(item.endDate), -7);
-    if (newEnd < parseDate(item.startDate)) return;
-    await updateContent({ id: item._id, endDate: dateKey(newEnd) });
-    setActiveMenu(null);
-  }
-
-  async function handleDelay(item: ContentItem) {
-    if (!item.startDate || !item.endDate) return;
-    await updateContent({
-      id: item._id,
-      startDate: dateKey(addDays(parseDate(item.startDate), 7)),
-      endDate: dateKey(addDays(parseDate(item.endDate), 7)),
-    });
-    setActiveMenu(null);
-  }
 
   if (items === undefined || panel === undefined) {
     return (
@@ -400,7 +375,8 @@ export default function ContentPage({
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setActiveMenu(activeMenu === item._id ? null : item._id);
+                                  const menuKey = `${item._id}:${key}`;
+                                  setActiveMenu(activeMenu === menuKey ? null : menuKey);
                                 }}
                                 className="opacity-50 hover:opacity-100 shrink-0 px-0.5 leading-none text-base"
                               >
@@ -423,10 +399,10 @@ export default function ContentPage({
                             )}
                           </div>
 
-                          {activeMenu === item._id && (
+                          {activeMenu === `${item._id}:${key}` && (
                             <div
                               ref={menuRef}
-                              className="absolute right-0 top-full mt-1 z-20 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 min-w-[200px]"
+                              className="absolute right-0 top-full mt-1 z-20 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 min-w-[140px]"
                             >
                               <Link
                                 href={`/panels/${panelId}/content/${item._id}`}
@@ -435,22 +411,6 @@ export default function ContentPage({
                               >
                                 Editar
                               </Link>
-                              <button onClick={() => handleExtend(item)} className="w-full text-left px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">
-                                Estender → (+1 semana)
-                              </button>
-                              <button
-                                onClick={() => handleShrink(item)}
-                                disabled={
-                                  !item.endDate || !item.startDate ||
-                                  addDays(parseDate(item.endDate), -7) < parseDate(item.startDate)
-                                }
-                                className="w-full text-left px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
-                              >
-                                Retrair ← (−1 semana)
-                              </button>
-                              <button onClick={() => handleDelay(item)} className="w-full text-left px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">
-                                Adiar → (mover 1 semana)
-                              </button>
                               <div className="border-t border-zinc-100 mt-1 pt-1">
                                 <button
                                   onClick={() => { setDeleteId(item._id); setActiveMenu(null); }}
