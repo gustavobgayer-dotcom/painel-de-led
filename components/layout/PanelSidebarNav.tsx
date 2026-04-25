@@ -11,10 +11,9 @@ const NAV_ITEMS = [
   { segment: "campaigns", label: "Campanha", icon: "📣" },
   { segment: "content", label: "Conteúdo", icon: "▦" },
   { segment: "comprovacoes", label: "Comprovações", icon: "📋" },
-  { segment: "checklist", label: "Checklist", icon: "✓" },
   { segment: "finance", label: "Financeiro", icon: "₿" },
   { segment: "metrics", label: "Métricas", icon: "📊" },
-  { segment: "tutorial", label: "Tutorial", icon: "?" },
+  { segment: "checklist", label: "Tarefas", icon: "✓" },
 ];
 
 export default function PanelSidebarNav({
@@ -69,6 +68,13 @@ export default function PanelSidebarNav({
       </nav>
 
       <div className="mt-auto pt-4 border-t border-zinc-100">
+        <Link
+          href={`${base}/tutorial`}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+        >
+          <span className="text-base w-5 text-center">?</span>
+          Tutorial
+        </Link>
         <Link
           href={`${base}/edit`}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
