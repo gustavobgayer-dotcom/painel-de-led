@@ -8,6 +8,7 @@ import { Id } from "@/convex/_generated/dataModel";
 
 const NAV_ITEMS = [
   { segment: "", label: "Visão Geral", icon: "◈" },
+  { segment: "campaigns", label: "Campanha", icon: "📣" },
   { segment: "content", label: "Conteúdo", icon: "▦" },
   { segment: "checklist", label: "Checklist", icon: "✓" },
   { segment: "finance", label: "Financeiro", icon: "₿" },
@@ -89,6 +90,13 @@ export default function PanelSidebarNav({
         >
           <span className="text-base w-5 text-center">≡</span>
           Tipos de conteúdo
+        </Link>
+        <Link
+          href="/settings/suppliers"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+        >
+          <span className="text-base w-5 text-center">👤</span>
+          Fornecedores
         </Link>
       </div>
     </aside>

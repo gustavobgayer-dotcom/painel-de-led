@@ -51,10 +51,19 @@ export default defineSchema({
     createdAt: v.number(),
   }).index("by_panel", ["panelId"]),
 
-  // ─── Campanhas pagas por empresas ─────────────────────────────────────────
+  // ─── Fornecedores ─────────────────────────────────────────────────────────
+  suppliers: defineTable({
+    name: v.string(),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+  }),
+
+  // ─── Campanhas por empresas ────────────────────────────────────────────────
   panel_campaigns: defineTable({
     panelId: v.id("panels"),
     companyName: v.string(),
+    name: v.optional(v.string()),
+    supplierId: v.optional(v.id("suppliers")),
     startDate: v.string(),
     endDate: v.string(),
     totalAmount: v.number(),
@@ -62,7 +71,8 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_panel", ["panelId"])
-    .index("by_panel_startDate", ["panelId", "startDate"]),
+    .index("by_panel_startDate", ["panelId", "startDate"])
+    .index("by_supplier", ["supplierId"]),
 
   // ─── Tipos de conteúdo (configurável) ────────────────────────────────────
   content_categories: defineTable({

@@ -1,0 +1,134 @@
+"use client";
+
+import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Spinner from "@/components/ui/Spinner";
+import Modal from "@/components/ui/Modal";
+import Link from "next/link";
+
+const inputCls =
+  "w-full border border-zinc-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 bg-white";
+
+export default function SuppliersPage() {
+  const entries = useQuery(api.suppliers.listSuppliersWithCount);
+  const createSupplier = useMutation(api.suppliers.createSupplier);
+  const deleteSupplier = useMutation(api.suppliers.deleteSupplier);
+
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState("");
+  const [deleteId, setDeleteId] = useState<Id<"suppliers"> | null>(null);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    await createSupplier({ name: name.trim() });
+    setName("");
+    setShowForm(false);
+  }
+
+  return (
+    <div className="min-h-screen bg-zinc-50 px-6 py-12">
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-8">
+          <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-700">
+            ← Voltar
+          </Link>
+          <h1 className="text-2xl font-semibold text-zinc-900 mt-3">
+            Fornecedores
+          </h1>
+          <p className="text-zinc-500 text-sm mt-1">
+            Empresas que veiculam campanhas nos painéis.
+          </p>
+        </div>
+
+        {entries === undefined ? (
+          <div className="flex justify-center py-16">
+            <Spinner size="lg" />
+          </div>
+        ) : (
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-zinc-700">
+                Fornecedores cadastrados
+              </h2>
+              <Button onClick={() => setShowForm(true)}>+ Adicionar</Button>
+            </div>
+
+            {showForm && (
+              <form
+                onSubmit={handleCreate}
+                className="mb-4 p-4 bg-zinc-50 rounded-lg flex gap-3 items-end"
+              >
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-zinc-600">
+                    Nome do fornecedor *
+                  </label>
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ex: TCL"
+                    required
+                    autoFocus
+                    className={inputCls}
+                  />
+                </div>
+                <Button type="submit">Salvar</Button>
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => { setShowForm(false); setName(""); }}
+                >
+                  Cancelar
+                </Button>
+              </form>
+            )}
+
+            {entries.length === 0 && !showForm ? (
+              <p className="text-sm text-zinc-400 py-4 text-center">
+                Nenhum fornecedor cadastrado.
+              </p>
+            ) : (
+              <div className="flex flex-col divide-y divide-zinc-100">
+                {entries.map(({ supplier, campaignCount }) => (
+                  <div key={supplier._id} className="flex items-center justify-between py-3">
+                    <div>
+                      <span className="text-sm font-medium text-zinc-800">
+                        {supplier.name}
+                      </span>
+                      <span className="text-xs text-zinc-400 ml-3">
+                        {campaignCount} {campaignCount === 1 ? "campanha" : "campanhas"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setDeleteId(supplier._id)}
+                      className="text-xs text-zinc-300 hover:text-red-500 cursor-pointer transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        )}
+      </div>
+
+      <Modal
+        open={deleteId !== null}
+        title="Excluir fornecedor"
+        description="Tem certeza que deseja excluir este fornecedor? As campanhas já registradas não serão afetadas."
+        confirmLabel="Excluir"
+        onConfirm={async () => {
+          if (deleteId) await deleteSupplier({ id: deleteId });
+          setDeleteId(null);
+        }}
+        onCancel={() => setDeleteId(null)}
+        danger
+      />
+    </div>
+  );
+}

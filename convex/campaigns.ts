@@ -23,6 +23,8 @@ export const createCampaign = mutation({
   args: {
     panelId: v.id("panels"),
     companyName: v.string(),
+    name: v.optional(v.string()),
+    supplierId: v.optional(v.id("suppliers")),
     startDate: v.string(),
     endDate: v.string(),
     totalAmount: v.number(),
@@ -40,6 +42,8 @@ export const updateCampaign = mutation({
   args: {
     id: v.id("panel_campaigns"),
     companyName: v.optional(v.string()),
+    name: v.optional(v.string()),
+    supplierId: v.optional(v.id("suppliers")),
     startDate: v.optional(v.string()),
     endDate: v.optional(v.string()),
     totalAmount: v.optional(v.number()),
