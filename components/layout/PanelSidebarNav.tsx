@@ -10,11 +10,11 @@ const NAV_ITEMS = [
   { segment: "", label: "Visão Geral", icon: "◈" },
   { segment: "campaigns", label: "Campanha", icon: "📣" },
   { segment: "content", label: "Conteúdo", icon: "▦" },
+  { segment: "comprovacoes", label: "Comprovações", icon: "📋" },
   { segment: "checklist", label: "Checklist", icon: "✓" },
   { segment: "finance", label: "Financeiro", icon: "₿" },
   { segment: "maintenance", label: "Manutenção", icon: "⚙" },
   { segment: "metrics", label: "Métricas", icon: "📊" },
-  { segment: "comprovacoes", label: "Comprovações", icon: "📋" },
   { segment: "tutorial", label: "Tutorial", icon: "?" },
 ];
 
@@ -31,7 +31,7 @@ export default function PanelSidebarNav({
   const base = `/panels/${panelId}`;
 
   return (
-    <aside className="w-56 shrink-0 flex flex-col border-r border-zinc-200 bg-white px-3 py-5 h-screen sticky top-0">
+    <aside className="w-56 shrink-0 flex flex-col border-r border-zinc-200 bg-white px-3 py-5 h-screen sticky top-0 print:hidden">
       <Link href="/" className="px-3 mb-2 block group">
         <span className="text-xs text-zinc-400 group-hover:text-zinc-600 transition-colors">
           ← Todos os painéis
