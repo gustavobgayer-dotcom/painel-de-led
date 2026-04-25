@@ -1,10 +1,10 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { use, useState, useEffect, Suspense } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
@@ -32,16 +32,18 @@ function rangesOverlap(aStart: string, aEnd: string, bStart: string, bEnd: strin
   return !(aEnd < bStart || aStart > bEnd);
 }
 
-export default function ContentFormPage({
+function ContentFormInner({
   params,
+  searchParams,
 }: {
   params: Promise<{ panelId: string; contentId: string }>;
+  searchParams: Promise<{ slot?: string; startDate?: string }>;
 }) {
   const { panelId, contentId } = use(params);
+  const sp = use(searchParams);
   const isNew = contentId === "new";
   const pid = panelId as Id<"panels">;
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const item = useQuery(
     api.content.getContent,
@@ -61,8 +63,8 @@ export default function ContentFormPage({
     contentCategory: "",
     fileRef: "",
     duration: "10",
-    slotNumber: searchParams.get("slot") ?? "",
-    startDate: searchParams.get("startDate") ?? "",
+    slotNumber: sp.slot ?? "",
+    startDate: sp.startDate ?? "",
     endDate: "",
     status: "draft" as Status,
     campaignId: "",
@@ -367,5 +369,25 @@ export default function ContentFormPage({
         </div>
       </form>
     </div>
+  );
+}
+
+export default function ContentFormPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ panelId: string; contentId: string }>;
+  searchParams: Promise<{ slot?: string; startDate?: string }>;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-64">
+          <Spinner size="lg" />
+        </div>
+      }
+    >
+      <ContentFormInner params={params} searchParams={searchParams} />
+    </Suspense>
   );
 }
