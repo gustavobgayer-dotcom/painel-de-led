@@ -90,6 +90,7 @@ export default defineSchema({
       v.literal("draft"),
       v.literal("pending_approval"),
       v.literal("scheduled"),
+      v.literal("active"),
     ),
     scheduledWeekStart: v.optional(v.string()),
     scheduledAt: v.optional(v.number()),

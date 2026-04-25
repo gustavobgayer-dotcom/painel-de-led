@@ -10,6 +10,7 @@ export const listContent = query({
         v.literal("draft"),
         v.literal("pending_approval"),
         v.literal("scheduled"),
+        v.literal("active"),
       )
     ),
     type: v.optional(
@@ -125,6 +126,7 @@ export const updateContent = mutation({
         v.literal("draft"),
         v.literal("pending_approval"),
         v.literal("scheduled"),
+        v.literal("active"),
       )
     ),
     scheduledWeekStart: v.optional(v.string()),
