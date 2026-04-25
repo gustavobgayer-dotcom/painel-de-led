@@ -10,7 +10,7 @@ import Card from "@/components/ui/Card";
 import Spinner from "@/components/ui/Spinner";
 import Link from "next/link";
 
-type Status = "draft" | "pending_approval" | "scheduled";
+type Status = "draft" | "pending_approval" | "scheduled" | "active";
 
 const inputCls =
   "w-full border border-zinc-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 bg-white";
