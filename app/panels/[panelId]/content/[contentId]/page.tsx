@@ -59,7 +59,6 @@ function ContentFormInner({
 
   const [form, setForm] = useState({
     title: "",
-    source: "cassol" as "cassol" | "fornecedor",
     contentCategory: "",
     fileRef: "",
     duration: "10",
@@ -76,7 +75,6 @@ function ContentFormInner({
     if (item) {
       setForm({
         title: item.title,
-        source: item.source ?? "cassol",
         contentCategory: item.contentCategory ?? "",
         fileRef: item.fileRef ?? "",
         duration: String(item.duration ?? 10),
@@ -117,14 +115,14 @@ function ContentFormInner({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (dateRangeInvalid || !form.contentCategory) return;
+    if (dateRangeInvalid || !form.contentCategory || !form.campaignId) return;
     setLoading(true);
     setError(null);
     try {
       const payload = {
         title: form.title,
         type: "video" as const,
-        source: form.source,
+        source: "fornecedor" as const,
         contentCategory: form.contentCategory as Id<"content_categories">,
         fileRef: form.fileRef || undefined,
         duration: Number(form.duration) || 10,
@@ -132,9 +130,7 @@ function ContentFormInner({
         startDate: form.startDate || undefined,
         endDate: form.endDate || undefined,
         status: (form.status === "active" ? "draft" : form.status) as "draft" | "pending_approval" | "scheduled",
-        campaignId: form.campaignId
-          ? (form.campaignId as Id<"panel_campaigns">)
-          : undefined,
+        campaignId: form.campaignId as Id<"panel_campaigns">,
       };
 
       if (isNew) {
@@ -158,7 +154,7 @@ function ContentFormInner({
     );
   }
 
-  const canSave = !loading && !dateRangeInvalid && !!form.contentCategory;
+  const canSave = !loading && !dateRangeInvalid && !!form.contentCategory && !!form.campaignId;
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
@@ -178,7 +174,7 @@ function ContentFormInner({
         <Card>
           <h2 className="text-sm font-semibold text-zinc-700 mb-4">Informações</h2>
           <div className="flex flex-col gap-4">
-            <Field label="Título *">
+            <Field label="Nome do conteúdo *">
               <input
                 value={form.title}
                 onChange={(e) => set("title", e.target.value)}
@@ -186,18 +182,34 @@ function ContentFormInner({
                 className={inputCls}
               />
             </Field>
-            <Field label="Origem">
-              <select
-                value={form.source}
-                onChange={(e) => {
-                  set("source", e.target.value);
-                  if (e.target.value === "cassol") set("campaignId", "");
-                }}
-                className={inputCls}
-              >
-                <option value="cassol">Cassol</option>
-                <option value="fornecedor">Fornecedor</option>
-              </select>
+            <Field label="Campanha *">
+              {campaigns === undefined ? (
+                <div className="h-9 flex items-center"><Spinner size="sm" /></div>
+              ) : campaigns.length === 0 ? (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                  Nenhuma campanha cadastrada para este painel.{" "}
+                  <Link
+                    href={`/panels/${panelId}/campaigns`}
+                    className="underline font-medium hover:text-amber-900"
+                  >
+                    Cadastrar campanha →
+                  </Link>
+                </div>
+              ) : (
+                <select
+                  value={form.campaignId}
+                  onChange={(e) => set("campaignId", e.target.value)}
+                  required
+                  className={inputCls}
+                >
+                  <option value="">Selecionar campanha…</option>
+                  {campaigns.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name ? `${c.name} — ${c.companyName}` : c.companyName} · {c.startDate} → {c.endDate}
+                    </option>
+                  ))}
+                </select>
+              )}
             </Field>
             <Field label="Tipo de conteúdo *">
               {categories === undefined ? (
@@ -317,41 +329,6 @@ function ContentFormInner({
             </Field>
           </div>
         </Card>
-
-        {form.source === "fornecedor" && (
-          <Card>
-            <h2 className="text-sm font-semibold text-zinc-700 mb-1">Campanha paga</h2>
-            <p className="text-xs text-zinc-400 mb-4">
-              Conteúdo de fornecedor — vincule a uma campanha para calcular receita e CPM.
-            </p>
-            {campaigns && campaigns.length > 0 ? (
-              <Field label="Campanha">
-                <select
-                  value={form.campaignId}
-                  onChange={(e) => set("campaignId", e.target.value)}
-                  className={inputCls}
-                >
-                  <option value="">Selecionar campanha…</option>
-                  {campaigns.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.companyName} · {c.startDate} → {c.endDate}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            ) : (
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-                Nenhuma campanha cadastrada para este painel.{" "}
-                <Link
-                  href={`/panels/${panelId}/finance`}
-                  className="underline font-medium hover:text-amber-900"
-                >
-                  Cadastrar campanha no Financeiro →
-                </Link>
-              </div>
-            )}
-          </Card>
-        )}
 
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
